@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "username": "john_doe",
+    "password": "$2b$10$...",
+    "email": "john@example.com",
+    "resetPasswordToken": null,
+    "resetPasswordExpires": null
+  },
+  {
+    "id": 1780313568043,
+    "username": "rouhi438",
+    "password": "$2b$10$BHp23iS4GSvILM9/5VEszOrAicDjvzcs/wfujKJqsL1XkiFvhVHEG",
+    "email": "rouhi438@gmail.com",
+    "resetPasswordToken": "4609544cc3a0029738f8b5bd190a704d8435d6e56d74ceddd2ce0b5be1e6fba4",
+    "resetPasswordExpires": 1780317955362,
+    "isAdmin": true
+  }
+]

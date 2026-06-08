@@ -1,0 +1,60 @@
+.food-ticker {
+    width: 100%;
+    height: 140px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    overflow: hidden;
+    position: relative;
+    margin: 20px 0 0 0;
+    border-top: 0.5px solid #ddd;
+    border-bottom: 0.5px solid #ddd;
+    position: absolute;
+    bottom: 10px;
+}
+
+.ticker-content {
+    display: flex;
+    height: 100%;
+    width: max-content;
+    animation: scroll 30s linear infinite;
+}
+
+.ticker-item {
+    height: 100%;
+    padding: 8px;
+    flex-shrink: 0;
+}
+
+.ticker-item img {
+    height: 100%;
+    width: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.ticker-item img:hover {
+    transform: scale(1.05);
+}
+
+/* توقف حرکت در صورت هاور (اختیاری) */
+.food-ticker:hover .ticker-content {
+    animation-play-state: paused;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* برای موبایل ارتفاع کمتر */
+@media (max-width: 768px) {
+    .food-ticker {
+        height: 100px;
+    }
+}
