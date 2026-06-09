@@ -22,7 +22,10 @@ export default function LoginPage() {
       }
       navigate("/");
     } catch (err) {
-      alert(err.response?.data?.error || "Error");
+      console.error("Full error object:", err);
+      const message =
+        err.response?.data?.error || err.message || "Unknown error";
+      alert("Login error: " + message);
     }
   };
   const togglePassVisiblity = () => {
