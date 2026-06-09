@@ -135,10 +135,10 @@ export default function Modal({
 
         {isOwner && (
           <div className="modal-actions">
-            <button className="modal-edit-btn" onClick={() => onEdit(recipe)}>
-              <i className="fas fa-edit"></i> Edit
-            </button>
-            <button
+            <span className="modal-edit-btn" onClick={() => onEdit(recipe)}>
+              <i className="fas fa-edit"></i>
+            </span>
+            <span
               className="modal-delete-btn"
               onClick={() => {
                 if (window.confirm("Are you sure to delete this recipe?")) {
@@ -147,8 +147,8 @@ export default function Modal({
                 }
               }}
             >
-              <i className="fas fa-trash"></i> Delete
-            </button>
+              <i className="fas fa-trash"></i>
+            </span>
           </div>
         )}
 

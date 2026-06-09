@@ -383,6 +383,10 @@
     animation: blinkCounter 3s infinite;
 }
 
+.modal-actions span {
+    margin: 10px;
+}
+
 @keyframes blinkCounter {
 
     0%,
