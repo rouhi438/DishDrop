@@ -306,6 +306,10 @@ textarea {
 }
 
 @media (max-width:500px) {
+    #add {
+        padding: 30px 5px;
+    }
+
     .images-grid {
         flex-direction: column;
     }

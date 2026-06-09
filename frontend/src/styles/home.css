@@ -165,7 +165,7 @@
 
 @media (max-width: 768px) {
     .hero {
-        min-height: 85vh;
+        min-height: 80vh;
     }
 
     .welcome {
