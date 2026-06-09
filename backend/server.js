@@ -7,14 +7,22 @@ const recipeRoutes = require("./routes/recipeRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
-
+const allowedOrigin = [
+  "http://localhost:5173",
+  "https://dishdrop.vercel.app",
+  "https://dishdrop-8fqc.onrender.com",
+];
 app.use(
   cors({
-    origin: [
-      "https://dishdrop-8fqc.onrender.com",
-      "https://dishdrop.vercel.app",
-      "http://localhost:5173",
-    ],
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        var msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   }),
 );
