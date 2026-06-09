@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/admin.css";
+const API_BASE =
+  import.meta.env.VITE_API_URL || "https://dishdrop-8fqc.onrender.com";
 
 export default function AdminPage() {
   const navigate = useNavigate();
@@ -13,7 +15,7 @@ export default function AdminPage() {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3000/admin/stats", {
+        const res = await fetch(`${API_BASE}/admin/stats`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Access denied");

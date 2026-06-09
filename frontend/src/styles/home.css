@@ -164,8 +164,12 @@
 }
 
 @media (max-width: 768px) {
+    .hero {
+        min-height: 85vh;
+    }
+
     .welcome {
-        margin-top: 50px;
+        margin-top: 60px;
     }
 
     .title {

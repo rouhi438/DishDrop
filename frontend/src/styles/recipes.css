@@ -404,6 +404,10 @@
     object-fit: cover;
 }
 
+.user-rating .stars i {
+    font-size: 25px;
+}
+
 .modal-card div {
     padding: 24px;
 }
@@ -457,6 +461,10 @@
 
         width: 40px;
         height: 40px;
+    }
+
+    .user-rating .stars i {
+        font-size: 18px;
     }
 }
 

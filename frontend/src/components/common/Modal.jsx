@@ -161,7 +161,6 @@ export default function Modal({
                 style={{
                   cursor: !effectiveUserId || rated ? "not-allowed" : "pointer",
                   color: star <= (userRating || 0) ? "#ff9a5a" : "#ccc",
-                  fontSize: "25px",
                   opacity: rated ? 0.4 : 1,
                 }}
                 onClick={() => handleStarClick(star)}
