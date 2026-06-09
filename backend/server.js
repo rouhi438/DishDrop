@@ -1,8 +1,10 @@
 require("dotenv").config();
+const mongoose = require("mongoose");
 const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const recipeRoutes = require("./routes/recipeRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
@@ -12,9 +14,12 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use("/", authRoutes);
 app.use("/recipes", recipeRoutes);
-
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
-
-const adminRoutes = require("./routes/adminRoutes");
 app.use("/admin", adminRoutes);
+
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log("MongoDB error:", err));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));

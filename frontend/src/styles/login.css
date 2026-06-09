@@ -168,3 +168,13 @@
     color: green;
     font-size: 14px;
 }
+
+@media (max-width:500px) {
+    .login-container {
+        padding: 30px 20px;
+    }
+
+    .top .title {
+        font-size: 24px;
+    }
+}

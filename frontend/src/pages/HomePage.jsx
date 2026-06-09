@@ -33,7 +33,7 @@ export default function HomePage() {
           controlsList="nodownload nofullscreen noremoteplayback"
           title=""
         >
-          <source src="../../public/images/video.mp4" type="video/mp4" />
+          <source src="/images/video.mp4" type="video/mp4" />
         </video>
         <div className="hero-content">
           <p className="welcome">Welcome to</p>
