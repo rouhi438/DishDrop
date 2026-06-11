@@ -69,23 +69,50 @@ exports.deleteRecipe = async (req, res) => {
 
 exports.rateRecipe = async (req, res) => {
   const { id } = req.params;
-  const { rating } = req.body;
+  let { rating } = req.body;
   const userId = req.userId;
+
+  rating = Number(rating);
+  if (isNaN(rating) || rating < 1 || rating > 5) {
+    return res
+      .status(400)
+      .json({ error: "Rating must be a number between 1 and 5" });
+  }
+
+  if (!userId) {
+    return res.status(401).json({ error: "You must be logged in to rate" });
+  }
+
   try {
     const recipe = await Recipe.findById(id);
-    if (!recipe) return res.status(404).json({ error: "Recipe not found" });
+    if (!recipe) {
+      return res.status(404).json({ error: "Recipe not found" });
+    }
+
     if (!recipe.ratings) recipe.ratings = [];
-    const existing = recipe.ratings.find((r) => r.userId === userId);
-    if (existing) {
+
+    const alreadyRated = recipe.ratings.some(
+      (r) => String(r.userId) === String(userId),
+    );
+    if (alreadyRated) {
       return res
         .status(403)
         .json({ error: "You have already rated this recipe" });
     }
-    recipe.ratings.push({ userId, rating });
+
+    recipe.ratings.push({ userId: String(userId), rating });
     await recipe.save();
-    res.json({ message: "Rating saved", ratings: recipe.ratings });
+
+    const total = recipe.ratings.reduce((sum, r) => sum + r.rating, 0);
+    const average = total / recipe.ratings.length;
+
+    res.json({
+      message: "Rating saved",
+      ratings: recipe.ratings,
+      averageRating: average,
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Rating failed" });
+    console.error("Error in rateRecipe:", err);
+    res.status(500).json({ error: err.message || "Rating failed" });
   }
 };
