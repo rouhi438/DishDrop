@@ -9,6 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 exports.register = async (req, res) => {
   const { username, password, email } = req.body;
   try {
+    if (!email) return res.status(400).json({ error: "Email is required" });
     const existing = await User.findOne({ username });
     if (existing) return res.status(400).json({ error: "Username exists" });
     const hashed = await bcrypt.hash(password, 10);
@@ -20,8 +21,8 @@ exports.register = async (req, res) => {
     );
     res.json({ token, user: username });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Registration failed" });
+    console.error("Registration error:", err);
+    res.status(500).json({ error: err.message });
   }
 };
 
