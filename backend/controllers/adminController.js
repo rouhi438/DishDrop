@@ -1,5 +1,5 @@
-const User = require("../models/use");
-const Recipe = require("../models/rec");
+const User = require("../models/User");
+const Recipe = require("../models/Recipe");
 
 exports.getAdminStats = async (req, res) => {
   if (!req.userIsAdmin) return res.status(403).json({ error: "Access denied" });

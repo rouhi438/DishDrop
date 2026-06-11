@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const User = require("../models/use");
+const User = require("../models/User");
 const { sendResetEmail } = require("../services/emailService");
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
