@@ -31,9 +31,12 @@ app.get("/ping", (req, res) => {
 });
 
 mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log("MongoDB error:", err));
+  .connect(process.env.MONGO_URL, {
+    serverSelectionTimeoutMS: 30000,
+    family: 4,
+  })
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => console.log("MongoDB connection error:", err));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));

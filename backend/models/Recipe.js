@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const ratingSchema = new mongoose.Schema({
-  userId: Number,
+  userId: String,
   rating: Number,
 });
 
@@ -12,7 +12,7 @@ const recipeSchema = new mongoose.Schema({
   category: String,
   cuisine: { type: String, default: "Other" },
   images: [String],
-  creator_id: Number,
+  creator_id: String,
   creator_username: String,
   date: { type: Date, default: Date.now },
   ratings: [ratingSchema],
