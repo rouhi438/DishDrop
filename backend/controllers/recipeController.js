@@ -1,119 +1,91 @@
-const fs = require("fs");
-const path = require("path");
-const recipesPath = path.join(__dirname, "../recipes.json");
+const Recipe = require("../models/Recipe");
 
-function readRecipes() {
-  if (!fs.existsSync(recipesPath)) return [];
-  const data = fs.readFileSync(recipesPath, "utf-8").trim();
-  if (!data) return [];
+exports.getAllRecipes = async (req, res) => {
   try {
-    return JSON.parse(data);
+    const recipes = await Recipe.find().lean();
+    const recipesWithAvg = recipes.map((recipe) => {
+      let avg = 0;
+      if (recipe.ratings && recipe.ratings.length) {
+        const sum = recipe.ratings.reduce((acc, r) => acc + r.rating, 0);
+        avg = sum / recipe.ratings.length;
+      }
+      return { ...recipe, averageRating: avg };
+    });
+    res.json({ recipes: recipesWithAvg, currentUserId: req.userId || null });
   } catch (err) {
-    console.error("Invalid recipes.json format, resetting to []:", err);
-    return [];
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch recipes" });
   }
-}
-function writeRecipes(recipes) {
-  fs.writeFileSync(recipesPath, JSON.stringify(recipes, null, 2));
-}
+};
 
-exports.addRecipe = (req, res) => {
-  console.log("Received body:", req.body);
+exports.addRecipe = async (req, res) => {
   try {
-    const recipes = readRecipes();
-    const newRecipe = {
+    const newRecipe = new Recipe({
       ...req.body,
-      id: Date.now(),
       creator_id: req.userId,
       creator_username: req.userUsername,
-      date: new Date().toISOString(),
+      date: new Date(),
       images: req.body.images || [],
       cuisine: req.body.cuisine || "Other",
-      ratings: req.body.ratings || [],
-    };
-    recipes.push(newRecipe);
-    writeRecipes(recipes);
+    });
+    await newRecipe.save();
     res.json(newRecipe);
   } catch (err) {
-    console.error("Error in addRecipe:", err);
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: "Failed to add recipe" });
   }
 };
 
-exports.updateRecipe = (req, res) => {
+exports.updateRecipe = async (req, res) => {
   const { id } = req.params;
-  let recipes = readRecipes();
-  const index = recipes.findIndex((r) => r.id == id);
-  if (index === -1) return res.status(404).json({ error: "Not found" });
-  if (recipes[index].creator_id !== req.userId)
-    return res.status(403).json({ error: "Not owner" });
-  recipes[index] = {
-    ...recipes[index],
-    ...req.body,
-    cuisine: req.body.cuisine || recipes[index].cuisine || "Other",
-    images: req.body.images || recipes[index].images || [],
-  };
-  writeRecipes(recipes);
-  res.json(recipes[index]);
+  try {
+    const recipe = await Recipe.findById(id);
+    if (!recipe) return res.status(404).json({ error: "Not found" });
+    if (recipe.creator_id !== req.userId)
+      return res.status(403).json({ error: "Not owner" });
+    Object.assign(recipe, req.body);
+    await recipe.save();
+    res.json(recipe);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Update failed" });
+  }
 };
 
-exports.deleteRecipe = (req, res) => {
+exports.deleteRecipe = async (req, res) => {
   const { id } = req.params;
-  let recipes = readRecipes();
-  const recipe = recipes.find((r) => r.id == id);
-  if (!recipe) return res.status(404).json({ error: "Not found" });
-  if (recipe.creator_id !== req.userId)
-    return res.status(403).json({ error: "Not owner" });
-  recipes = recipes.filter((r) => r.id != id);
-  writeRecipes(recipes);
-  res.json({ message: "Deleted" });
+  try {
+    const recipe = await Recipe.findById(id);
+    if (!recipe) return res.status(404).json({ error: "Not found" });
+    if (recipe.creator_id !== req.userId)
+      return res.status(403).json({ error: "Not owner" });
+    await Recipe.deleteOne({ _id: id });
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Delete failed" });
+  }
 };
 
-exports.rateRecipe = (req, res) => {
+exports.rateRecipe = async (req, res) => {
   const { id } = req.params;
   const { rating } = req.body;
   const userId = req.userId;
-  if (!rating || rating < 1 || rating > 5) {
-    return res.status(400).json({ error: "Rating must be between 1 and 5" });
-  }
-  let recipes = readRecipes();
-  const recipeIndex = recipes.findIndex((r) => r.id == id);
-
-  if (recipeIndex === -1)
-    return res.status(404).json({ error: "Recipe not found" });
-  const recipe = recipes[recipeIndex];
-
-  if (!recipe.ratings) recipe.ratings = [];
-
-  const existingIndex = recipe.ratings.findIndex((r) => r.userId === userId);
-  if (existingIndex !== -1) {
-    return res
-      .status(403)
-      .json({ error: "You have already rated this recipe" });
-    //recipe.ratings[existingIndex].rating = rating;
-  } else {
-    recipe.ratings.push({ userId, rating });
-  }
-  writeRecipes(recipes);
-  res.json({ message: "Rating saved", ratings: recipe.ratings });
-};
-
-exports.getAllRecipes = (req, res) => {
-  const recipes = readRecipes();
-  const recipesWithCuisine = recipes.map((recipe) => ({
-    ...recipe,
-    cuisine: recipe.cuisine || "Other",
-  }));
-  const recipesWithStats = recipesWithCuisine.map((recipe) => {
-    let avg = 0;
-    if (recipe.ratings && recipe.ratings.length) {
-      const sum = recipe.ratings.reduce((acc, r) => acc + r.rating, 0);
-      avg = sum / recipe.ratings.length;
+  try {
+    const recipe = await Recipe.findById(id);
+    if (!recipe) return res.status(404).json({ error: "Recipe not found" });
+    if (!recipe.ratings) recipe.ratings = [];
+    const existing = recipe.ratings.find((r) => r.userId === userId);
+    if (existing) {
+      return res
+        .status(403)
+        .json({ error: "You have already rated this recipe" });
     }
-    return {
-      ...recipe,
-      averageRating: avg,
-    };
-  });
-  res.json({ recipes: recipesWithStats, currentUserId: req.userId || null });
+    recipe.ratings.push({ userId, rating });
+    await recipe.save();
+    res.json({ message: "Rating saved", ratings: recipe.ratings });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Rating failed" });
+  }
 };

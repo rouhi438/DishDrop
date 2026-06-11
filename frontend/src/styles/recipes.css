@@ -408,6 +408,10 @@
     object-fit: cover;
 }
 
+.user-rating .stars {
+    padding: 0;
+}
+
 .user-rating .stars i {
     font-size: 25px;
 }
@@ -468,7 +472,7 @@
     }
 
     .user-rating .stars i {
-        font-size: 18px;
+        font-size: 22px;
     }
 }
 
@@ -481,8 +485,7 @@
 }
 
 .average-display {
-
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .rate-num {
@@ -520,7 +523,7 @@
     }
 
     .average-display {
-        font-size: 11px;
+        font-size: 12px;
     }
 
     .recipe-number-badge {
