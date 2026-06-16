@@ -40,7 +40,6 @@ export default function Modal({
       : [];
 
   const getExistingRating = () => {
-    //if (!currentUserId || !recipe?.ratings) return null;
     if (!effectiveUserId || !recipe?.ratings) return null;
 
     const found = recipe.ratings.find((r) => r.userId === effectiveUserId);
@@ -121,43 +120,6 @@ export default function Modal({
     }
   };
 
-  // const handleRate = async (rating) => {
-  //   if (rated || isSubmitting) return;
-  //   setIsSubmitting(true);
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     const res = await fetch(
-  //       `http://localhost:3000/recipes/${recipe.id}/rate`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         body: JSON.stringify({ rating }),
-  //       },
-  //     );
-  //     const data = await res.json();
-  //     if (!res.ok) {
-  //       alert(data.error || "Failed to save rating");
-  //       return;
-  //     }
-  //     const newRatings = data.ratings || [];
-  //     const sum = newRatings.reduce((acc, r) => acc + r.rating, 0);
-  //     const newAvg = newRatings.length ? sum / newRatings.length : 0;
-  //     setAverage(newAvg);
-  //     setUserRating(rating);
-  //     setRated(true);
-  //     if (typeof onUpdateRating === "function")
-  //       onUpdateRating(recipe.id, newRatings);
-  //   } catch (err) {
-  //     console.error("Error in handleRate:", err);
-  //     alert("An error occurred. Please try again.");
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
   const handleStarClick = (star) => {
     if (!effectiveUserId) {
       const confirmLogin = window.confirm(
@@ -224,7 +186,7 @@ export default function Modal({
           <p className="recipe-id">
             <b>ID:</b> {recipe.id}
           </p>
-          <p className="recipe-id-raw" style={{display: 'none'}}>
+          <p className="recipe-id-raw" style={{ display: "none" }}>
             {recipeId}
           </p>
           <p className="added-by">
