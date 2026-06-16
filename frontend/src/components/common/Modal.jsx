@@ -30,6 +30,9 @@ export default function Modal({
   };
   const effectiveUserId = getEffectiveUserId();
 
+  // Use a resilient id that works whether backend returns `id` or `_id`
+  const recipeId = recipe?.id || recipe?._id;
+
   const images = recipe?.images?.length
     ? recipe.images
     : recipe?.image
@@ -78,30 +81,38 @@ export default function Modal({
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        `http://localhost:3000/recipes/${recipe.id}/rate`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ rating }),
+      if (!token) {
+        alert("You are not logged in. Please login first.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const baseUrl =
+        import.meta.env.VITE_API_URL || "https://dishdrop-8fqc.onrender.com";
+      const res = await fetch(`${baseUrl}/recipes/${recipe.id}/rate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify({ rating: Number(rating) }),
+      });
+
       const data = await res.json();
       if (!res.ok) {
         alert(data.error || "Failed to save rating");
         return;
       }
+
       const newRatings = data.ratings || [];
       const sum = newRatings.reduce((acc, r) => acc + r.rating, 0);
       const newAvg = newRatings.length ? sum / newRatings.length : 0;
       setAverage(newAvg);
       setUserRating(rating);
       setRated(true);
-      if (typeof onUpdateRating === "function")
-        onUpdateRating(recipe.id, newRatings);
+      if (typeof onUpdateRating === "function") {
+        onUpdateRating(recipeId, newAvg);
+      }
     } catch (err) {
       console.error("Error in handleRate:", err);
       alert("An error occurred. Please try again.");
@@ -109,6 +120,43 @@ export default function Modal({
       setIsSubmitting(false);
     }
   };
+
+  // const handleRate = async (rating) => {
+  //   if (rated || isSubmitting) return;
+  //   setIsSubmitting(true);
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const res = await fetch(
+  //       `http://localhost:3000/recipes/${recipe.id}/rate`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: JSON.stringify({ rating }),
+  //       },
+  //     );
+  //     const data = await res.json();
+  //     if (!res.ok) {
+  //       alert(data.error || "Failed to save rating");
+  //       return;
+  //     }
+  //     const newRatings = data.ratings || [];
+  //     const sum = newRatings.reduce((acc, r) => acc + r.rating, 0);
+  //     const newAvg = newRatings.length ? sum / newRatings.length : 0;
+  //     setAverage(newAvg);
+  //     setUserRating(rating);
+  //     setRated(true);
+  //     if (typeof onUpdateRating === "function")
+  //       onUpdateRating(recipe.id, newRatings);
+  //   } catch (err) {
+  //     console.error("Error in handleRate:", err);
+  //     alert("An error occurred. Please try again.");
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
 
   const handleStarClick = (star) => {
     if (!effectiveUserId) {
@@ -142,7 +190,7 @@ export default function Modal({
               className="modal-delete-btn"
               onClick={() => {
                 if (window.confirm("Are you sure to delete this recipe?")) {
-                  onDelete(recipe.id);
+                  onDelete(recipeId);
                   onClose();
                 }
               }}
@@ -175,6 +223,9 @@ export default function Modal({
           <h2>{recipe.name}</h2>
           <p className="recipe-id">
             <b>ID:</b> {recipe.id}
+          </p>
+          <p className="recipe-id-raw" style={{display: 'none'}}>
+            {recipeId}
           </p>
           <p className="added-by">
             <b>Creator:</b> {recipe.creator_username || recipe.creator_id}
