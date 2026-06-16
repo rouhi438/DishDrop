@@ -3,15 +3,18 @@ const Recipe = require("../models/Recipe");
 exports.getAllRecipes = async (req, res) => {
   try {
     const recipes = await Recipe.find().lean();
-    const recipesWithAvg = recipes.map((recipe) => {
+    const recipesWithAvgAndId = recipes.map((recipe) => {
       let avg = 0;
       if (recipe.ratings && recipe.ratings.length) {
         const sum = recipe.ratings.reduce((acc, r) => acc + r.rating, 0);
         avg = sum / recipe.ratings.length;
       }
-      return { ...recipe, averageRating: avg };
+      return { ...recipe, id: recipe._id, averageRating: avg };
     });
-    res.json({ recipes: recipesWithAvg, currentUserId: req.userId || null });
+    res.json({
+      recipes: recipesWithAvgAndId,
+      currentUserId: req.userId || null,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch recipes" });
