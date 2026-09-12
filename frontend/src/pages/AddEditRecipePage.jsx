@@ -34,12 +34,30 @@ export default function AddEditRecipePage() {
 
   return (
     <div id="add">
-      <BackButton to="/" />
-      <RecipeForm
-        initialData={initialData}
-        onSubmit={handleSubmit}
-        onCancel={() => navigate("/")}
-      />
+      <div className="recipe-editor-shell">
+        <div className="recipe-editor-topbar">
+          <BackButton to="/" />
+          <span className="editor-status">
+            <i className="fa-regular fa-floppy-disk" aria-hidden="true" />
+            {isEditing ? "Editing recipe" : "New recipe"}
+          </span>
+        </div>
+        <header className="recipe-editor-heading">
+          <p className="editor-eyebrow">
+            {isEditing ? "Refine your creation" : "Share something delicious"}
+          </p>
+          <h1>{isEditing ? "Edit your recipe" : "Create a new recipe"}</h1>
+          <p>
+            Add the essential details and a few inviting photos. You can always
+            come back and polish it later.
+          </p>
+        </header>
+        <RecipeForm
+          initialData={initialData}
+          onSubmit={handleSubmit}
+          onCancel={() => navigate("/")}
+        />
+      </div>
     </div>
   );
 }

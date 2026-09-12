@@ -1,5 +1,5 @@
 import { useAuth } from "../../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import "../../styles/layout.css";
 
 export default function Navbar() {
@@ -16,23 +16,30 @@ export default function Navbar() {
         <Link to="/" className="utensil-icon" aria-label="DishDrop home">
           <i className="fa-solid fa-utensils"></i>
         </Link>
-        <Link to="/" className="app-name">
-          DishDrop
+        <Link to="/" className="brand-copy">
+          <span className="app-name">DishDrop</span>
+          <span className="brand-tagline">Cook · Share · Inspire</span>
         </Link>
       </div>
       <div className="right-side">
-        <Link to="/recipes" className="nav-link">Recipes</Link>
-        <Link
+        <NavLink
+          to="/recipes"
+          className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
+        >
+          Recipes
+        </NavLink>
+        <NavLink
           to={user ? "/add-recipe" : "/login"}
           state={user ? undefined : { from: "/add-recipe" }}
-          className="nav-link"
+          className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
         >
           Add recipe
-        </Link>
+        </NavLink>
         {user && user.isAdmin && (
-          <Link to="/admin" className="admin-link">
+          <NavLink to="/admin" className="admin-link">
+            <i className="fa-solid fa-shield-halved" aria-hidden="true" />
             Admin Panel
-          </Link>
+          </NavLink>
         )}
         {user && (
           <details className="account-menu">

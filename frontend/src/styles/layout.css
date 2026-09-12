@@ -44,14 +44,33 @@
 }
 
 .app-name {
+  display: block;
   color: #17211b;
   font-size: 1.35rem;
   font-weight: 800;
   letter-spacing: -.04em;
+  line-height: 1;
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   text-decoration: none;
 }
 
+.brand-tagline {
+  color: #7b7f78;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
 .nav-link {
+  position: relative;
+  padding: 13px 4px;
   color: #454942;
   font-size: .88rem;
   font-weight: 600;
@@ -62,8 +81,34 @@
   color: #c56734;
 }
 
+.nav-link::after {
+  position: absolute;
+  right: 4px;
+  bottom: 5px;
+  left: 4px;
+  height: 2px;
+  border-radius: 999px;
+  background: #d87842;
+  content: "";
+  opacity: 0;
+  transform: scaleX(.45);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.nav-link.active {
+  color: #173c32;
+}
+
+.nav-link.active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
 .admin-link,
 .login-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   border: 0;
   border-radius: 999px;
   padding: 10px 16px;
@@ -257,7 +302,8 @@
   }
 
   .nav-link,
-  .user-account {
+  .user-account,
+  .brand-tagline {
     display: none;
   }
 

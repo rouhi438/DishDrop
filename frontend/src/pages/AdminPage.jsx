@@ -18,7 +18,6 @@ export default function AdminPage() {
         });
         if (!res.ok) throw new Error("Access denied");
         const data = await res.json();
-        console.log("admin stats:", data);
         setStats(data);
       } catch (err) {
         console.error(err);
@@ -30,49 +29,128 @@ export default function AdminPage() {
     fetchStats();
   }, []);
 
-  if (loading)
-    return <div className="admin-loading">Loading admin data...</div>;
-  if (!stats)
-    return <div className="admin-error">No access or error loading data.</div>;
+  if (loading) {
+    return (
+      <div className="admin-status" role="status">
+        <span className="admin-spinner" aria-hidden="true" />
+        <strong>Preparing your dashboard</strong>
+        <p>Loading the latest DishDrop activity...</p>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="admin-status admin-error" role="alert">
+        <i className="fa-solid fa-circle-exclamation" aria-hidden="true" />
+        <strong>Dashboard unavailable</strong>
+        <p>You do not have access, or the data could not be loaded.</p>
+        <button onClick={() => navigate("/")}>Return home</button>
+      </div>
+    );
+  }
 
   return (
-    <div className="admin-container dark-web">
-      <button className="admin-back-btn" onClick={() => navigate(-1)}>
-        ← Back
-      </button>
-      <h1 className="admin-title">Admin Dashboard</h1>
-      <div className="global-stats">
-        <div className="stat-card">Total Users: {stats.global.totalUsers}</div>
-        <div className="stat-card">
-          Total Recipes: {stats.global.totalRecipes}
-        </div>
-        <div className="stat-card">
-          Total Ratings: {stats.global.totalRatings}
-        </div>
-      </div>
-      <div className="users-grid">
-        {stats.users.map((userStat) => (
-          <div key={userStat.userId} className="user-card dotted-box">
-            <h3>{userStat.username}</h3>
-            <p>
-              <strong>Email:</strong> {userStat.email}
-            </p>
-            <p>
-              <strong>Joined:</strong> {userStat.joined}
-            </p>
-            <p>
-              <strong>Recipes created:</strong> {userStat.recipeCount}
-            </p>
-            <p>
-              <strong>Ratings given:</strong> {userStat.ratingsGiven}
-            </p>
-            <p>
-              <strong>Rated recipe IDs:</strong>{" "}
-              {userStat.ratedRecipesIds.join(", ") || "None"}
-            </p>
+    <main className="admin-page">
+      <div className="admin-shell">
+        <header className="admin-hero">
+          <div className="admin-topbar">
+            <button className="admin-back-btn" onClick={() => navigate(-1)}>
+              <i className="fa-solid fa-arrow-left" aria-hidden="true" />
+              Back to app
+            </button>
+            <span className="admin-badge">
+              <i className="fa-solid fa-shield-halved" aria-hidden="true" />
+              Admin workspace
+            </span>
           </div>
-        ))}
+          <p className="admin-eyebrow">DishDrop operations</p>
+          <h1 className="admin-title">Community overview</h1>
+          <p className="admin-intro">
+            A clear snapshot of members, recipes, and activity across the platform.
+          </p>
+        </header>
+
+        <section className="global-stats" aria-label="Platform totals">
+          <article className="stat-card">
+            <span className="stat-icon stat-icon-users" aria-hidden="true">
+              <i className="fa-solid fa-users" />
+            </span>
+            <div>
+              <p>Total users</p>
+              <strong>{stats.global.totalUsers}</strong>
+              <span>Community members</span>
+            </div>
+          </article>
+          <article className="stat-card">
+            <span className="stat-icon stat-icon-recipes" aria-hidden="true">
+              <i className="fa-solid fa-book-open" />
+            </span>
+            <div>
+              <p>Total recipes</p>
+              <strong>{stats.global.totalRecipes}</strong>
+              <span>Published dishes</span>
+            </div>
+          </article>
+          <article className="stat-card">
+            <span className="stat-icon stat-icon-ratings" aria-hidden="true">
+              <i className="fa-solid fa-star" />
+            </span>
+            <div>
+              <p>Total ratings</p>
+              <strong>{stats.global.totalRatings}</strong>
+              <span>Community reviews</span>
+            </div>
+          </article>
+        </section>
+
+        <section className="members-section">
+          <div className="section-heading">
+            <div>
+              <p className="admin-eyebrow">Member directory</p>
+              <h2>Community members</h2>
+            </div>
+            <span className="member-count">{stats.users.length} accounts</span>
+          </div>
+
+          <div className="users-grid">
+            {stats.users.map((userStat) => (
+              <article key={userStat.userId} className="user-card">
+                <header className="user-card-header">
+                  <span className="member-avatar" aria-hidden="true">
+                    {userStat.username.charAt(0).toUpperCase()}
+                  </span>
+                  <div>
+                    <h3>{userStat.username}</h3>
+                    <p>Joined {userStat.joined}</p>
+                  </div>
+                </header>
+                <a className="member-email" href={`mailto:${userStat.email}`}>
+                  <i className="fa-regular fa-envelope" aria-hidden="true" />
+                  <span>{userStat.email}</span>
+                </a>
+                <div className="member-activity">
+                  <div>
+                    <strong>{userStat.recipeCount}</strong>
+                    <span>Recipes</span>
+                  </div>
+                  <div>
+                    <strong>{userStat.ratingsGiven}</strong>
+                    <span>Ratings</span>
+                  </div>
+                </div>
+                <details className="rated-recipes">
+                  <summary>
+                    Rated recipe IDs
+                    <i className="fa-solid fa-chevron-down" aria-hidden="true" />
+                  </summary>
+                  <p>{userStat.ratedRecipesIds?.join(", ") || "No ratings yet"}</p>
+                </details>
+              </article>
+            ))}
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
