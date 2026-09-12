@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { login as loginApi, register as registerApi } from "../services/api";
+import { createUserFromSession } from "../utils/auth";
 
 const AuthContext = createContext();
 
@@ -10,45 +11,37 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
-    let isAdmin = false;
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        isAdmin = payload.isAdmin || false;
-      } catch (e) {}
-    }
-    if (token && username) {
-      setUser({ username, token, isAdmin });
+    const restoredUser = createUserFromSession(token, username);
+    if (restoredUser) {
+      setUser(restoredUser);
+    } else {
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
     }
     setLoading(false);
   }, []);
 
   const login = async (username, password) => {
     const { data } = await loginApi(username, password);
+    const authenticatedUser = createUserFromSession(data.token, data.user);
+    if (!authenticatedUser) throw new Error("The server returned an invalid session.");
     localStorage.setItem("token", data.token);
     localStorage.setItem("username", data.user);
-    let isAdmin = false;
-    try {
-      const payload = JSON.parse(atob(data.token.split(".")[1]));
-      isAdmin = payload.isAdmin || false;
-    } catch (e) {}
-    setUser({ username: data.user, token: data.token, isAdmin });
+    setUser(authenticatedUser);
   };
 
   const register = async (username, password, email) => {
     const { data } = await registerApi(username, password, email);
+    const authenticatedUser = createUserFromSession(data.token, data.user);
+    if (!authenticatedUser) throw new Error("The server returned an invalid session.");
     localStorage.setItem("token", data.token);
     localStorage.setItem("username", data.user);
-    let isAdmin = false;
-    try {
-      const payload = JSON.parse(atob(data.token.split(".")[1]));
-      isAdmin = payload.isAdmin || false;
-    } catch (e) {}
-    setUser({ username: data.user, token: data.token, isAdmin });
+    setUser(authenticatedUser);
   };
 
   const logout = () => {
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
     setUser(null);
   };
 

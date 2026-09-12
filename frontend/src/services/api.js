@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "https://dishdrop-8fqc.onrender.com",
+  timeout: 30000,
 });
 
 API.interceptors.request.use((req) => {
@@ -23,3 +24,7 @@ export const fetchRecipes = () => API.get("/recipes");
 export const addRecipe = (recipe) => API.post("/recipes", recipe);
 export const updateRecipe = (id, recipe) => API.put(`/recipes/${id}`, recipe);
 export const deleteRecipe = (id) => API.delete(`/recipes/${id}`);
+export const rateRecipe = (id, rating) => API.post(`/recipes/${id}/rate`, { rating });
+
+export const getApiError = (error, fallback = "Something went wrong") =>
+  error?.response?.data?.error || (error?.code === "ECONNABORTED" ? "The server took too long to respond" : fallback);

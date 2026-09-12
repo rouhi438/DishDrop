@@ -1,30 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import {
   fetchRecipes,
   addRecipe,
   updateRecipe,
   deleteRecipe,
+  rateRecipe,
+  getApiError,
 } from "../services/api";
+import { mergeRatingSummary } from "../utils/ratings";
 
 export const useRecipes = () => {
   const [recipes, setRecipes] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const loadRecipes = async () => {
+  const loadRecipes = useCallback(async () => {
+    setLoading(true);
+    setError("");
     try {
       const res = await fetchRecipes();
-      setRecipes(res.data.recipes);
+      setRecipes(Array.isArray(res.data.recipes) ? res.data.recipes : []);
       setCurrentUserId(res.data.currentUserId);
     } catch (err) {
-      console.error(err);
+      setError(getApiError(err, "We could not load the recipes."));
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    loadRecipes();
   }, []);
 
   const add = async (recipe) => {
@@ -42,28 +44,22 @@ export const useRecipes = () => {
     await deleteRecipe(id);
     await loadRecipes();
   };
-  const updateRecipeRating = (recipeId, newAverage) => {
+  const submitRating = async (recipeId, rating) => {
+    const { data } = await rateRecipe(recipeId, rating);
     setRecipes((prev) =>
-      prev.map((recipe) => {
-        if (recipe.id !== recipeId) return recipe;
-        const ratings =
-          newAverage && Array.isArray(newAverage)
-            ? newAverage
-            : recipe.ratings || [];
-        const sum = ratings.reduce((acc, r) => acc + r.rating, 0);
-        const avg = ratings.length ? sum / ratings.length : 0;
-        return { ...recipe, ratings, averageRating: avg };
-      }),
+      prev.map((recipe) => (recipe.id === recipeId ? mergeRatingSummary(recipe, data) : recipe)),
     );
+    return data;
   };
   return {
     recipes,
     currentUserId,
     loading,
+    error,
     add,
     update,
     remove,
     refetch: loadRecipes,
-    updateRecipeRating,
+    submitRating,
   };
 };

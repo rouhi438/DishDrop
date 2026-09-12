@@ -1,125 +1,38 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "../../styles/recipes.css";
-import { useAuth } from "../../context/AuthContext";
 
-export default function RecipeCard({
-  recipe,
-  currentUserId,
-  onView,
-  onEdit,
-  onDelete,
-}) {
-  const { user } = useAuth();
-  let effectiveUserId = currentUserId;
-  if (!effectiveUserId && user?.token) {
-    try {
-      const payload = JSON.parse(atob(user.token.split(".")[1]));
-      effectiveUserId = payload.id;
-    } catch (e) {}
-  }
-  const isOwner =
-    effectiveUserId && String(recipe.creator_id) === String(effectiveUserId);
-  const images = recipe.images?.length
-    ? recipe.images
-    : recipe.image
-      ? [recipe.image]
-      : [];
+export default function RecipeCard({ recipe, currentUserId, onView, onEdit, onDelete }) {
+  const isOwner = currentUserId && String(recipe.creator_id) === String(currentUserId);
+  const images = recipe.images?.filter(Boolean) || [];
+  const average = Number(recipe.averageRating || 0);
+  const count = Number(recipe.ratingCount || 0);
 
   return (
-    <div className="recipe-card">
-      <div className="image-slider">
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
-          spaceBetween={10}
-          slidesPerView={1}
-          navigation={images.length > 1}
-          pagination={{ clickable: true, dynamicBullets: true }}
-          loop={images.length > 1}
-          autoplay={{
-            delay: 3000,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-          }}
-          className="card-swiper"
-        >
-          {images.map((img, idx) => (
-            <SwiperSlide key={idx}>
-              <img src={img} alt={`${recipe.name} - ${idx + 1}`} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
-      <div className="details">
-        <h3 className="recipe-name">
-          <span className="label">Recipe Name:</span>
-          <br />
-          <span>{recipe.name}</span>
-        </h3>
-        <div className="meta-tags">
-          <span className="category-name">{recipe.category}</span>
-          <span className="cuisine-name">{recipe.cuisine || "Other"}</span>
+    <article className="recipe-card">
+      <button className="recipe-image-button" onClick={() => onView(recipe)} aria-label={`View ${recipe.name}`}>
+        {images.length ? <Swiper modules={[Navigation, Pagination]} navigation={images.length > 1} pagination={images.length > 1 ? { clickable: true } : false} loop={images.length > 1} className="card-swiper">
+          {images.map((image, index) => <SwiperSlide key={`${image.slice(0, 30)}-${index}`}><img src={image} alt={index === 0 ? recipe.name : `${recipe.name}, image ${index + 1}`} loading="lazy" /></SwiperSlide>)}
+        </Swiper> : <div className="recipe-placeholder" aria-hidden="true"><i className="fa-solid fa-utensils" /></div>}
+      </button>
+      <div className="recipe-card-body">
+        <div className="meta-tags"><span>{recipe.category}</span><span>{recipe.cuisine || "Other"}</span></div>
+        <h2 dir="auto">{recipe.name}</h2>
+        <p className="creator">By {recipe.creator_username || "DishDrop cook"}</p>
+        <div className="card-footer">
+          <div className="rating-summary" aria-label={count ? `${average.toFixed(1)} out of 5 from ${count} ratings` : "Not rated yet"}>
+            <i className="fa-solid fa-star" aria-hidden="true" /><strong>{count ? average.toFixed(1) : "New"}</strong>{count > 0 && <span>({count})</span>}
+          </div>
+          <div className="card-actions">
+            <button onClick={() => onView(recipe)} aria-label={`View ${recipe.name}`}><i className="fa-solid fa-arrow-right" aria-hidden="true" /></button>
+            {isOwner && <button onClick={() => onEdit(recipe)} aria-label={`Edit ${recipe.name}`}><i className="fa-solid fa-pen" aria-hidden="true" /></button>}
+            {isOwner && <button className="danger" onClick={() => onDelete(recipe.id)} aria-label={`Delete ${recipe.name}`}><i className="fa-solid fa-trash" aria-hidden="true" /></button>}
+          </div>
         </div>
       </div>
-      <div className="icon-holder">
-        <div className="icons">
-          <i
-            className="fas fa-eye"
-            onClick={() => onView(recipe)}
-            title="View"
-          ></i>
-          {isOwner && (
-            <i
-              className="fas fa-edit"
-              onClick={() => onEdit(recipe)}
-              title="Edit"
-            ></i>
-          )}
-          {isOwner && (
-            <i
-              className="fas fa-trash"
-              onClick={() => onDelete(recipe.id)}
-              title="Delete"
-            ></i>
-          )}
-        </div>
-        <div className="star">
-          {(() => {
-            const avg =
-              recipe.averageRating ??
-              (recipe.ratings && recipe.ratings.length
-                ? recipe.ratings.reduce((a, b) => a + b.rating, 0) /
-                  recipe.ratings.length
-                : 0);
-            const total = recipe.ratings ? recipe.ratings.length : 0;
-            const filled = Math.round(avg);
-            return (
-              <>
-                <div className="stars">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <i
-                      key={s}
-                      className={`fa-star ${s <= filled ? "fas" : "far"}`}
-                      style={{
-                        color: s <= filled ? "#ff9a5a" : "#ccc",
-                      }}
-                    ></i>
-                  ))}
-                </div>
-                <div className="avg-holder">
-                  <strong style={{ color: "#ff9a5a" }}>{avg.toFixed(1)}</strong>
-                  <span style={{ marginLeft: 6, color: "#666" }}>
-                    ( {total} )
-                  </span>
-                </div>
-              </>
-            );
-          })()}
-        </div>
-      </div>
-    </div>
+    </article>
   );
 }

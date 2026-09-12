@@ -1,17 +1,33 @@
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+const { getJwtSecret } = require("../config/env");
 
-module.exports = (req, res, next) => {
+function readBearerToken(req) {
   const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ error: "No token" });
-  const token = authHeader.split(" ")[1];
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.userId = decoded.id;
-    req.userUsername = decoded.username;
-    req.userIsAdmin = decoded.isAdmin || false;
-    next();
-  } catch {
-    res.status(401).json({ error: "Invalid token" });
-  }
-};
+  if (!authHeader) return null;
+  const [scheme, token] = authHeader.split(" ");
+  return scheme === "Bearer" && token ? token : null;
+}
+
+function authenticate(required) {
+  return (req, res, next) => {
+    const token = readBearerToken(req);
+    if (!token) {
+      if (required) return res.status(401).json({ error: "Authentication required" });
+      return next();
+    }
+    try {
+      const decoded = jwt.verify(token, getJwtSecret());
+      req.userId = String(decoded.id);
+      req.userUsername = decoded.username;
+      req.userIsAdmin = Boolean(decoded.isAdmin);
+      return next();
+    } catch (error) {
+      if (error.message?.startsWith("Missing required environment variable")) return next(error);
+      return res.status(401).json({ error: "Invalid or expired token" });
+    }
+  };
+}
+
+module.exports = authenticate(true);
+module.exports.optionalAuth = authenticate(false);
+module.exports.readBearerToken = readBearerToken;

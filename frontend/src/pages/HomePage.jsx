@@ -1,24 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import FoodTicker from "../components/common/FoodTicker";
 import "../styles/home.css";
 
 export default function HomePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const handleAddRecipe = () => {
-    if (user) {
-      navigate("/add-recipe");
-    } else {
-      const confirmLogin = window.confirm(
-        "You must be logged in to add a recipe. Would you like to proceed to the login page?",
-      );
-      if (confirmLogin) {
-        navigate("/login");
-      }
-    }
-  };
+  const handleAddRecipe = () => navigate(user ? "/add-recipe" : "/login", { state: { from: "/add-recipe" } });
 
   return (
     <div className="home-wrapper">
@@ -31,26 +19,20 @@ export default function HomePage() {
           playsInline
           disablePictureInPicture
           controlsList="nodownload nofullscreen noremoteplayback"
-          title=""
+          aria-hidden="true"
         >
           <source src="/images/video.mp4" type="video/mp4" />
         </video>
         <div className="hero-content">
-          <p className="welcome">Welcome to</p>
-          <h2 className="title">DishDrop</h2>
-          <p className="description">Manage Your Favorite Recipes Easily!</p>
+          <p className="hero-eyebrow">Collect · Cook · Share</p>
+          <h1 className="hero-title">Recipes worth making <em>again.</em></h1>
+          <p className="description">Keep your favorite dishes in one beautiful place, discover ideas from cooks around the world, and share what happens in your kitchen.</p>
           <div className="btn-holder">
-            <div className="add-holder" onClick={handleAddRecipe}>
-              <i className="fa-solid fa-plus plus-icon"></i>
-              <button className="add-btn">Add New Recipe</button>
-            </div>
-            <div className="view-holder" onClick={() => navigate("/recipes")}>
-              <i className="fa-solid fa-receipt plus-icon"></i>
-              <button className="view-btn">View Recipes</button>
-            </div>
+            <button className="hero-btn hero-btn-primary" onClick={() => navigate("/recipes")}>Explore recipes <span aria-hidden="true">→</span></button>
+            <button className="hero-btn hero-btn-secondary" onClick={handleAddRecipe}><i className="fa-solid fa-plus" aria-hidden="true"></i> Add your recipe</button>
           </div>
+          <div className="hero-note"><span></span> Real recipes from real cooks</div>
         </div>
-        <FoodTicker />
       </section>
     </div>
   );

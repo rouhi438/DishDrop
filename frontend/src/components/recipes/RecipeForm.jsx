@@ -71,22 +71,31 @@ export default function RecipeForm({ initialData, onSubmit, onCancel }) {
 
   return (
     <form className="recipe-form-grid" onSubmit={handleSubmit}>
-      <div className="form-left">
+      <section className="form-left form-panel">
+        <div className="form-section-heading">
+          <span className="section-number">01</span>
+          <div>
+            <h2>Recipe details</h2>
+            <p>Tell the community what makes this dish special.</p>
+          </div>
+        </div>
         <div className="input-holder">
-          <div className="food-name-input">
-            <label>Name Of Food :</label>
+          <div className="food-name-input field-group">
+            <label htmlFor="recipe-name">Recipe name</label>
             <input
+              id="recipe-name"
               type="text"
               name="name"
               value={form.name}
               onChange={handleChange}
-              placeholder="Food Name..."
+              placeholder="e.g. Creamy mushroom pasta"
               required
             />
           </div>
-          <div className="cuisine">
-            <label>Cuisine :</label>
+          <div className="cuisine field-group">
+            <label htmlFor="recipe-cuisine">Cuisine</label>
             <select
+              id="recipe-cuisine"
               name="cuisine"
               value={form.cuisine}
               onChange={handleChange}
@@ -112,15 +121,16 @@ export default function RecipeForm({ initialData, onSubmit, onCancel }) {
               <option value="Other">Other</option>
             </select>
           </div>
-          <div className="category">
-            <label>Choose Category :</label>
+          <div className="category field-group">
+            <label htmlFor="recipe-category">Category</label>
             <select
+              id="recipe-category"
               name="category"
               value={form.category}
               onChange={handleChange}
               required
             >
-              <option value="">Select</option>
+              <option value="">Select category</option>
               <option value="Main">Main Dish</option>
               <option value="Appetizer">Appetizer</option>
               <option value="Dessert">Dessert</option>
@@ -130,47 +140,72 @@ export default function RecipeForm({ initialData, onSubmit, onCancel }) {
             </select>
           </div>
         </div>
-        <label>Ingredients :</label>
-        <textarea
-          name="ingredients"
-          value={form.ingredients}
-          onChange={handleChange}
-          placeholder="Ingredients..."
-          rows="4"
-          required
-        />
-        <label>Instructions :</label>
-        <textarea
-          name="instructions"
-          value={form.instructions}
-          onChange={handleChange}
-          placeholder="Instructions..."
-          rows="6"
-          required
-        />
+        <div className="field-group">
+          <label htmlFor="recipe-ingredients">Ingredients</label>
+          <textarea
+            id="recipe-ingredients"
+            name="ingredients"
+            value={form.ingredients}
+            onChange={handleChange}
+            placeholder="List each ingredient and quantity..."
+            rows="5"
+            required
+          />
+          <small>Tip: put each ingredient on a new line.</small>
+        </div>
+        <div className="field-group">
+          <label htmlFor="recipe-instructions">Instructions</label>
+          <textarea
+            id="recipe-instructions"
+            name="instructions"
+            value={form.instructions}
+            onChange={handleChange}
+            placeholder="Describe the cooking steps clearly..."
+            rows="7"
+            required
+          />
+          <small>Keep the steps short and easy to follow.</small>
+        </div>
         <div className="btn-holder">
           <button className="add-item-btn" type="submit">
+            <i className="fa-solid fa-check" aria-hidden="true" />
             {initialData ? "Update Recipe" : "Add Recipe"}
           </button>
           <button className="cancel-btn" type="button" onClick={onCancel}>
             Cancel
           </button>
         </div>
-      </div>
-      <div className="form-right">
+      </section>
+      <aside className="form-right form-panel">
+        <div className="form-section-heading">
+          <span className="section-number">02</span>
+          <div>
+            <h2>Recipe photos</h2>
+            <p>Show the finished dish from its best side.</p>
+          </div>
+        </div>
         <div className="images-grid">
           {[0, 1, 2].map((idx) => (
             <div
               key={idx}
-              className="image-card"
+              className={`image-card${idx === 0 ? " cover-image-card" : ""}`}
               onClick={() => fileInputRefs[idx].current.click()}
+              role="button"
+              tabIndex="0"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  fileInputRefs[idx].current.click();
+                }
+              }}
             >
               {form.images[idx] ? (
                 <div className="image-preview">
-                  <img src={form.images[idx]} alt={`preview ${idx}`} />
+                  <img src={form.images[idx]} alt={`Recipe preview ${idx + 1}`} />
                   <button
                     type="button"
                     className="remove-img"
+                    aria-label={`Remove image ${idx + 1}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       const newImages = [...form.images];
@@ -183,8 +218,11 @@ export default function RecipeForm({ initialData, onSubmit, onCancel }) {
                 </div>
               ) : (
                 <div className="upload-placeholder">
-                  <i className="fas fa-cloud-upload-alt upload-icon"></i>
-                  <span>Upload Image {idx + 1}</span>
+                  <span className="upload-icon-wrap">
+                    <i className="fas fa-cloud-upload-alt upload-icon" />
+                  </span>
+                  <strong>{idx === 0 ? "Add cover photo" : `Add photo ${idx + 1}`}</strong>
+                  <small>JPG, PNG or WebP</small>
                 </div>
               )}
               <input
@@ -198,9 +236,10 @@ export default function RecipeForm({ initialData, onSubmit, onCancel }) {
           ))}
         </div>
         <small className="hint-right">
-          Click on each box to upload an image (max 3). First image is cover.
+          <i className="fa-solid fa-circle-info" aria-hidden="true" />
+          Add up to three images. The first image becomes your recipe cover.
         </small>
-      </div>
+      </aside>
     </form>
   );
 }
