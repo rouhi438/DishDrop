@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/login.css";
 
 export default function LoginPage() {
@@ -9,23 +9,25 @@ export default function LoginPage() {
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const { login, register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     try {
       if (isRegister) {
         await register(username, password, email);
       } else {
         await login(username, password);
       }
-      navigate("/");
+      navigate(location.state?.from || "/");
     } catch (err) {
-      console.error("Full error object:", err);
       const message =
         err.response?.data?.error || err.message || "Unknown error";
-      alert("Login error: " + message);
+      setError(message);
     }
   };
   const togglePassVisiblity = () => {
@@ -42,6 +44,7 @@ export default function LoginPage() {
         <div className="down">
           <input
             type="text"
+            aria-label="Username"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -50,6 +53,7 @@ export default function LoginPage() {
           {isRegister && (
             <input
               type="email"
+              aria-label="Email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -59,16 +63,20 @@ export default function LoginPage() {
           <div className="pass-holder">
             <input
               type={showPassword ? "text" : "password"}
+              aria-label="Password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />{" "}
-            <i
+            <button
+              type="button"
+              aria-label={showPassword ? "Hide password" : "Show password"}
               className={`fa-solid ${showPassword ? "fa-eye" : "fa-eye-slash"} eye-icon`}
               onClick={togglePassVisiblity}
-            ></i>
+            />
           </div>
+          {error && <p role="alert">{error}</p>}
           <button type="submit">{isRegister ? "Register" : "Login"}</button>
           <button type="button" onClick={() => setIsRegister(!isRegister)}>
             {isRegister

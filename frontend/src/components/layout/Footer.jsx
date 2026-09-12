@@ -22,17 +22,10 @@ export default function Footer() {
             </li>
           </ul>
         </div>
-        <div className="footer-section">
-          <h4>Follow Us</h4>
-          <div className="social-icons">
-            <i className="fab fa-instagram"></i>
-            <i className="fab fa-facebook"></i>
-            <i className="fab fa-twitter"></i>
-          </div>
-        </div>
+        <div className="footer-section footer-statement"><p>Made for cooks who keep the good ones.</p></div>
       </div>
       <div className="footer-bottom">
-        <p>&copy; 2025 DishDrop. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} DishDrop. All rights reserved.</p>
       </div>
     </footer>
   );

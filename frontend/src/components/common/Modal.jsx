@@ -1,206 +1,57 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import "../../styles/recipes.css";
 import ImageGallery from "./ImageGallery";
 
-export default function Modal({
-  recipe,
-  onClose,
-  currentUserId,
-  recipeNumber,
-  onEdit,
-  onDelete,
-  onUpdateRating,
-}) {
+export default function Modal({ recipe, onClose, currentUserId, onEdit, onDelete, onRate }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
-
-  const getEffectiveUserId = () => {
-    if (currentUserId) return currentUserId;
-    if (user?.token) {
-      try {
-        const payload = JSON.parse(atob(user.token.split(".")[1]));
-        return payload.id;
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    return null;
-  };
-  const effectiveUserId = getEffectiveUserId();
-
-  // Use a resilient id that works whether backend returns `id` or `_id`
-  const recipeId = recipe?.id || recipe?._id;
-
-  const images = recipe?.images?.length
-    ? recipe.images
-    : recipe?.image
-      ? [recipe.image]
-      : [];
-
-  const getExistingRating = () => {
-    if (!effectiveUserId || !recipe?.ratings) return null;
-
-    const found = recipe.ratings.find((r) => r.userId === effectiveUserId);
-    return found ? found.rating : null;
-  };
-
-  const [userRating, setUserRating] = useState(getExistingRating());
-  const [average, setAverage] = useState(recipe?.averageRating || 0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [rated, setRated] = useState(!!getExistingRating());
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const existing = getExistingRating();
-    if (existing) {
-      setUserRating(existing);
-      setRated(true);
-    }
-  }, [effectiveUserId, recipe?.ratings]);
-
-  useEffect(() => {
-    // Keep average and rated state in sync when parent updates the recipe
-    if (recipe?.ratings) {
-      const sum = recipe.ratings.reduce((acc, r) => acc + r.rating, 0);
-      const avg = recipe.ratings.length ? sum / recipe.ratings.length : 0;
-      setAverage(avg);
-      const existing = getExistingRating();
-      setUserRating(existing);
-      setRated(!!existing);
-    } else if (typeof recipe?.averageRating === "number") {
-      setAverage(recipe.averageRating || 0);
-    }
-  }, [recipe?.ratings, recipe?.averageRating, effectiveUserId]);
+    if (!recipe) return undefined;
+    const onKeyDown = (event) => { if (event.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKeyDown);
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKeyDown); document.body.style.overflow = ""; };
+  }, [recipe, onClose]);
 
   if (!recipe) return null;
+  const isOwner = currentUserId && String(recipe.creator_id) === String(currentUserId);
+  const images = recipe.images?.filter(Boolean) || [];
+  const average = Number(recipe.averageRating || 0);
+  const count = Number(recipe.ratingCount || 0);
 
   const handleRate = async (rating) => {
-    if (rated || isSubmitting) return;
+    if (!currentUserId) { navigate("/login", { state: { from: "/recipes" } }); return; }
     setIsSubmitting(true);
+    setMessage("");
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("You are not logged in. Please login first.");
-        setIsSubmitting(false);
-        return;
-      }
-
-      const baseUrl =
-        import.meta.env.VITE_API_URL || "https://dishdrop-8fqc.onrender.com";
-      const res = await fetch(`${baseUrl}/recipes/${recipe.id}/rate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ rating: Number(rating) }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        alert(data.error || "Failed to save rating");
-        return;
-      }
-
-      const newRatings = data.ratings || [];
-      const sum = newRatings.reduce((acc, r) => acc + r.rating, 0);
-      const newAvg = newRatings.length ? sum / newRatings.length : 0;
-      setAverage(newAvg);
-      setUserRating(rating);
-      setRated(true);
-      if (typeof onUpdateRating === "function") {
-        onUpdateRating(recipeId, newAvg);
-      }
-    } catch (err) {
-      console.error("Error in handleRate:", err);
-      alert("An error occurred. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+      await onRate(recipe.id, rating);
+      setMessage("Your rating was saved. You can change it anytime.");
+    } catch (error) {
+      setMessage(error?.response?.data?.error || "We couldn’t save your rating. Please try again.");
+    } finally { setIsSubmitting(false); }
   };
 
-  const handleStarClick = (star) => {
-    if (!effectiveUserId) {
-      const confirmLogin = window.confirm(
-        "You must be logged in to rate this recipe. Would you like to go to the login page?",
-      );
-      if (confirmLogin) {
-        navigate("/login");
-      }
-      return;
-    }
-    if (!rated) {
-      handleRate(star);
-    }
-  };
-
-  const isOwner =
-    effectiveUserId && String(recipe.creator_id) === String(effectiveUserId);
-  return (
-    <div className="overlay" onClick={onClose}>
-      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        <ImageGallery images={images} />
-        {recipeNumber && <div className="recipe-number">#{recipeNumber} </div>}
-
-        {isOwner && (
-          <div className="modal-actions">
-            <span className="modal-edit-btn" onClick={() => onEdit(recipe)}>
-              <i className="fas fa-edit"></i>
-            </span>
-            <span
-              className="modal-delete-btn"
-              onClick={() => {
-                if (window.confirm("Are you sure to delete this recipe?")) {
-                  onDelete(recipeId);
-                  onClose();
-                }
-              }}
-            >
-              <i className="fas fa-trash"></i>
-            </span>
+  return <div className="overlay" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+    <article className="modal-card" role="dialog" aria-modal="true" aria-labelledby="recipe-dialog-title">
+      <button className="modal-close" onClick={onClose} aria-label="Close recipe">×</button>
+      <ImageGallery images={images} name={recipe.name} />
+      <div className="modal-content">
+        <div className="modal-kicker"><span>{recipe.category}</span><span>{recipe.cuisine || "Other"}</span></div>
+        <h2 id="recipe-dialog-title">{recipe.name}</h2>
+        <p className="added-by">By {recipe.creator_username || "DishDrop cook"} · {new Date(recipe.date).toLocaleDateString()}</p>
+        <section className="user-rating" aria-label="Rate this recipe">
+          <div><strong>{count ? `${average.toFixed(1)} / 5` : "Not rated yet"}</strong><span>{count ? `${count} rating${count === 1 ? "" : "s"}` : "Be the first to rate it"}</span></div>
+          <div className="rating-buttons">
+            {[1,2,3,4,5].map((star) => <button key={star} disabled={isSubmitting} className={star <= Number(recipe.userRating || 0) ? "selected" : ""} onClick={() => handleRate(star)} aria-label={`${star} star${star === 1 ? "" : "s"}`} aria-pressed={star === recipe.userRating}><i className="fa-solid fa-star" aria-hidden="true" /></button>)}
           </div>
-        )}
-
-        <div className="user-rating">
-          <div className="stars">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <i
-                key={star}
-                className={`fa-star ${star <= (userRating || 0) ? "fas" : "far"}`}
-                style={{
-                  cursor: !effectiveUserId || rated ? "not-allowed" : "pointer",
-                  color: star <= (userRating || 0) ? "#ff9a5a" : "#ccc",
-                  opacity: rated ? 0.4 : 1,
-                }}
-                onClick={() => handleStarClick(star)}
-              ></i>
-            ))}
-          </div>
-          <div className="average-display">
-            Rate : <span className="rate-num">{average.toFixed(1)}</span> / 5
-          </div>
-        </div>
-        <div style={{ padding: "20px" }}>
-          <h2>{recipe.name}</h2>
-          <p className="recipe-id">
-            <b>ID:</b> {recipe.id}
-          </p>
-          <p className="recipe-id-raw" style={{ display: "none" }}>
-            {recipeId}
-          </p>
-          <p className="added-by">
-            <b>Creator:</b> {recipe.creator_username || recipe.creator_id}
-          </p>
-          <p className="added-by">
-            <b>Date:</b> {new Date(recipe.date).toLocaleDateString()}
-          </p>
-          <h4>Ingredients</h4>
-          <p>{recipe.ingredients}</p>
-          <h4>Instructions</h4>
-          <p>{recipe.instructions}</p>
-        </div>
+          {!currentUserId && <small>Log in to leave a rating.</small>}
+          {message && <small role="status">{message}</small>}
+        </section>
+        <section className="recipe-copy"><h3>Ingredients</h3><p dir="auto">{recipe.ingredients}</p><h3>Instructions</h3><p dir="auto">{recipe.instructions}</p></section>
+        {isOwner && <div className="modal-actions"><button onClick={() => onEdit(recipe)}>Edit recipe</button><button className="danger" onClick={() => onDelete(recipe.id)}>Delete recipe</button></div>}
       </div>
-    </div>
-  );
+    </article>
+  </div>;
 }

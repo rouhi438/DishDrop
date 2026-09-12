@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/admin.css";
 const API_BASE =
@@ -7,7 +6,6 @@ const API_BASE =
 
 export default function AdminPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 

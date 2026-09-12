@@ -151,6 +151,18 @@
     color: white;
 }
 
+.down .eye-icon,
+.down .eye-icon:hover {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+    color: #666;
+}
+
 .down a {
     color: #764ba2;
     text-decoration: none;

@@ -7,11 +7,11 @@ exports.getAdminStats = async (req, res) => {
     const users = await User.find({});
     const recipes = await Recipe.find({});
     const usersStats = users.map((user) => {
-      const userRecipes = recipes.filter((r) => r.creator_id === user._id);
+      const userRecipes = recipes.filter((r) => String(r.creator_id) === String(user._id));
       let ratingsGiven = 0;
       let ratedRecipesIds = [];
       recipes.forEach((recipe) => {
-        const found = recipe.ratings?.find((r) => r.userId === user._id);
+        const found = recipe.ratings?.find((r) => String(r.userId) === String(user._id));
         if (found) {
           ratingsGiven++;
           ratedRecipesIds.push(recipe._id);

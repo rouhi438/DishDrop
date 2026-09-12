@@ -13,7 +13,7 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="left-side">
-        <Link to="/" className="utensil-icon">
+        <Link to="/" className="utensil-icon" aria-label="DishDrop home">
           <i className="fa-solid fa-utensils"></i>
         </Link>
         <Link to="/" className="app-name">
@@ -21,6 +21,8 @@ export default function Navbar() {
         </Link>
       </div>
       <div className="right-side">
+        <Link to="/recipes" className="nav-link">Recipes</Link>
+        <Link to={user ? "/add-recipe" : "/login"} className="nav-link">Add recipe</Link>
         {user && user.isAdmin && (
           <Link to="/admin" className="admin-link">
             Admin Panel
@@ -34,9 +36,7 @@ export default function Navbar() {
             <span>Logout</span>
           </button>
         )}
-        <span className="user-icon">
-          <i className="fa-solid fa-user"></i>
-        </span>
+        {!user && <Link to="/login" className="login-nav-btn">Log in</Link>}
       </div>
     </header>
   );

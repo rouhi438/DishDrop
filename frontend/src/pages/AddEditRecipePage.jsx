@@ -27,7 +27,7 @@ export default function AddEditRecipePage() {
       if (isEditing) await updateRecipe(id, data);
       else await addRecipe(data);
       navigate("/");
-    } catch (err) {
+    } catch {
       alert("Error saving recipe");
     }
   };

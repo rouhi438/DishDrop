@@ -3,6 +3,15 @@ import { login as loginApi, register as registerApi } from "../services/api";
 
 const AuthContext = createContext();
 
+function decodeToken(token) {
+  try {
+    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    return JSON.parse(atob(base64));
+  } catch {
+    return null;
+  }
+}
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,15 +19,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
-    let isAdmin = false;
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        isAdmin = payload.isAdmin || false;
-      } catch (e) {}
-    }
-    if (token && username) {
-      setUser({ username, token, isAdmin });
+    const payload = token ? decodeToken(token) : null;
+    if (token && username && payload?.id && (!payload.exp || payload.exp * 1000 > Date.now())) {
+      setUser({ username, token, id: String(payload.id), isAdmin: Boolean(payload.isAdmin) });
+    } else {
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
     }
     setLoading(false);
   }, []);
@@ -27,28 +33,21 @@ export const AuthProvider = ({ children }) => {
     const { data } = await loginApi(username, password);
     localStorage.setItem("token", data.token);
     localStorage.setItem("username", data.user);
-    let isAdmin = false;
-    try {
-      const payload = JSON.parse(atob(data.token.split(".")[1]));
-      isAdmin = payload.isAdmin || false;
-    } catch (e) {}
-    setUser({ username: data.user, token: data.token, isAdmin });
+    const payload = decodeToken(data.token);
+    setUser({ username: data.user, token: data.token, id: String(payload.id), isAdmin: Boolean(payload.isAdmin) });
   };
 
   const register = async (username, password, email) => {
     const { data } = await registerApi(username, password, email);
     localStorage.setItem("token", data.token);
     localStorage.setItem("username", data.user);
-    let isAdmin = false;
-    try {
-      const payload = JSON.parse(atob(data.token.split(".")[1]));
-      isAdmin = payload.isAdmin || false;
-    } catch (e) {}
-    setUser({ username: data.user, token: data.token, isAdmin });
+    const payload = decodeToken(data.token);
+    setUser({ username: data.user, token: data.token, id: String(payload.id), isAdmin: Boolean(payload.isAdmin) });
   };
 
   const logout = () => {
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
     setUser(null);
   };
 
@@ -60,3 +59,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+export { decodeToken };
