@@ -1,29 +1,179 @@
-.home-wrapper { min-height: calc(100vh - 72px); background: #0d211c; }
-.hero { position: relative; min-height: calc(100svh - 72px); overflow: hidden; display: flex; align-items: center; isolation: isolate; }
-.background-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 45%; z-index: -3; }
-.hero::before { content: ""; position: absolute; inset: 0; z-index: -2; background: linear-gradient(90deg, rgba(5,21,18,.94) 0%, rgba(5,21,18,.78) 44%, rgba(5,21,18,.28) 74%, rgba(5,21,18,.52) 100%); }
-.hero::after { content: ""; position: absolute; inset: auto 0 0; height: 34%; z-index: -1; background: linear-gradient(transparent, rgba(4,17,14,.72)); }
-.hero-content { width: min(1180px, calc(100% - 48px)); margin: 0 auto; padding: 96px 0 80px; color: #fff; }
-.hero-eyebrow { margin-bottom: 24px; color: #d7e5dc; font-size: .75rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; }
-.hero-title { max-width: 780px; font-size: clamp(3.4rem, 7.1vw, 6.9rem); font-weight: 600; line-height: .94; letter-spacing: -.065em; }
-.hero-title em { color: #f4aa6b; font-family: "DM Serif Display", Georgia, serif; font-weight: 400; }
-.description { max-width: 640px; margin-top: 30px; color: rgba(255,255,255,.78); font-size: clamp(1rem, 1.6vw, 1.18rem); line-height: 1.7; }
-.btn-holder { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
-.hero-btn { min-height: 52px; border: 1px solid transparent; border-radius: 999px; padding: 0 24px; font-weight: 700; cursor: pointer; transition: transform .2s ease, background .2s ease, border-color .2s ease; }
-.hero-btn:hover { transform: translateY(-2px); }
-.hero-btn-primary { background: #f4aa6b; color: #17211b; }
-.hero-btn-primary:hover { background: #ffc18d; }
-.hero-btn-secondary { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.34); color: #fff; backdrop-filter: blur(10px); }
-.hero-btn-secondary:hover { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.6); }
-.hero-note { display: flex; align-items: center; gap: 9px; margin-top: 22px; color: rgba(255,255,255,.63); font-size: .78rem; }
-.hero-note span { width: 8px; height: 8px; border-radius: 50%; background: #62c58b; box-shadow: 0 0 0 5px rgba(98,197,139,.14); }
-@media (max-width: 700px) {
-  .hero { align-items: flex-end; }
-  .hero::before { background: linear-gradient(180deg, rgba(5,21,18,.25), rgba(5,21,18,.92) 55%); }
-  .hero-content { width: min(100% - 32px, 1180px); padding: 150px 0 50px; }
-  .hero-title { font-size: clamp(3rem, 15vw, 4.6rem); line-height: .98; }
-  .description { margin-top: 22px; }
-  .btn-holder { flex-direction: column; }
-  .hero-btn { width: 100%; }
+.home-wrapper {
+  min-height: calc(100vh - 72px);
+  background: #0d211c;
 }
-@media (prefers-reduced-motion: reduce) { .background-video { display: none; } .hero { background: url("/images/food-back.avif") center/cover; } }
+
+.hero {
+  position: relative;
+  min-height: calc(100svh - 72px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  isolation: isolate;
+}
+
+.background-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 45%;
+  z-index: -3;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(90deg, rgba(5, 21, 18, .94) 0%, rgba(5, 21, 18, .18) 44%, rgba(5, 21, 18, .28) 74%, rgba(5, 21, 18, .22) 100%);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 34%;
+  z-index: -1;
+  background: linear-gradient(transparent, rgba(4, 17, 14, .72));
+}
+
+.hero-content {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 96px 0 80px;
+  color: #fff;
+}
+
+.hero-eyebrow {
+  margin-bottom: 24px;
+  color: #d7e5dc;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  max-width: 780px;
+  font-size: clamp(3.4rem, 7.1vw, 6.9rem);
+  font-weight: 600;
+  line-height: .94;
+  letter-spacing: -.065em;
+}
+
+.hero-title em {
+  color: #f4aa6b;
+  font-family: "DM Serif Display", Georgia, serif;
+  font-weight: 400;
+}
+
+.description {
+  max-width: 640px;
+  margin-top: 30px;
+  color: rgba(255, 255, 255, .78);
+  font-size: clamp(1rem, 1.6vw, 1.18rem);
+  line-height: 1.7;
+}
+
+.btn-holder {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.hero-btn {
+  min-height: 52px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease, border-color .2s ease;
+}
+
+.hero-btn:hover {
+  transform: translateY(-2px);
+}
+
+.hero-btn-primary {
+  background: #f4aa6b;
+  color: #17211b;
+}
+
+.hero-btn-primary:hover {
+  background: #ffc18d;
+}
+
+.hero-btn-secondary {
+  background: rgba(255, 255, 255, .08);
+  border-color: rgba(255, 255, 255, .34);
+  color: #fff;
+  backdrop-filter: blur(10px);
+}
+
+.hero-btn-secondary:hover {
+  background: rgba(255, 255, 255, .15);
+  border-color: rgba(255, 255, 255, .6);
+}
+
+.hero-note {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 22px;
+  color: rgba(255, 255, 255, .63);
+  font-size: .78rem;
+}
+
+.hero-note span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #62c58b;
+  box-shadow: 0 0 0 5px rgba(98, 197, 139, .14);
+}
+
+@media (max-width: 700px) {
+  .hero {
+    align-items: flex-end;
+  }
+
+  .hero::before {
+    background: linear-gradient(180deg, rgba(5, 21, 18, .25), rgba(5, 21, 18, .92) 55%);
+  }
+
+  .hero-content {
+    width: min(100% - 32px, 1180px);
+    padding: 150px 0 50px;
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 15vw, 4.6rem);
+    line-height: .98;
+  }
+
+  .description {
+    margin-top: 22px;
+  }
+
+  .btn-holder {
+    flex-direction: column;
+  }
+
+  .hero-btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .background-video {
+    display: none;
+  }
+
+  .hero {
+    background: url("/images/food-back.avif") center/cover;
+  }
+}
