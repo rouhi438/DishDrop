@@ -1,16 +1,8 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { login as loginApi, register as registerApi } from "../services/api";
+import { createUserFromSession } from "../utils/auth";
 
 const AuthContext = createContext();
-
-function decodeToken(token) {
-  try {
-    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    return JSON.parse(atob(base64));
-  } catch {
-    return null;
-  }
-}
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -19,9 +11,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
-    const payload = token ? decodeToken(token) : null;
-    if (token && username && payload?.id && (!payload.exp || payload.exp * 1000 > Date.now())) {
-      setUser({ username, token, id: String(payload.id), isAdmin: Boolean(payload.isAdmin) });
+    const restoredUser = createUserFromSession(token, username);
+    if (restoredUser) {
+      setUser(restoredUser);
     } else {
       localStorage.removeItem("token");
       localStorage.removeItem("username");
@@ -31,18 +23,20 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     const { data } = await loginApi(username, password);
+    const authenticatedUser = createUserFromSession(data.token, data.user);
+    if (!authenticatedUser) throw new Error("The server returned an invalid session.");
     localStorage.setItem("token", data.token);
     localStorage.setItem("username", data.user);
-    const payload = decodeToken(data.token);
-    setUser({ username: data.user, token: data.token, id: String(payload.id), isAdmin: Boolean(payload.isAdmin) });
+    setUser(authenticatedUser);
   };
 
   const register = async (username, password, email) => {
     const { data } = await registerApi(username, password, email);
+    const authenticatedUser = createUserFromSession(data.token, data.user);
+    if (!authenticatedUser) throw new Error("The server returned an invalid session.");
     localStorage.setItem("token", data.token);
     localStorage.setItem("username", data.user);
-    const payload = decodeToken(data.token);
-    setUser({ username: data.user, token: data.token, id: String(payload.id), isAdmin: Boolean(payload.isAdmin) });
+    setUser(authenticatedUser);
   };
 
   const logout = () => {
@@ -59,4 +53,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-export { decodeToken };

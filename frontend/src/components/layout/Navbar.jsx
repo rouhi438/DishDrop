@@ -22,19 +22,36 @@ export default function Navbar() {
       </div>
       <div className="right-side">
         <Link to="/recipes" className="nav-link">Recipes</Link>
-        <Link to={user ? "/add-recipe" : "/login"} className="nav-link">Add recipe</Link>
+        <Link
+          to={user ? "/add-recipe" : "/login"}
+          state={user ? undefined : { from: "/add-recipe" }}
+          className="nav-link"
+        >
+          Add recipe
+        </Link>
         {user && user.isAdmin && (
           <Link to="/admin" className="admin-link">
             Admin Panel
           </Link>
         )}
-        {user && <span className="user-account">{user?.username}</span>}
-
         {user && (
-          <button onClick={handleLogout} className="logout-nav-btn">
-            <i className="fas fa-sign-out-alt"></i>
-            <span>Logout</span>
-          </button>
+          <details className="account-menu">
+            <summary aria-label={`Open account menu for ${user.username}`}>
+              <span className="account-avatar" aria-hidden="true">
+                {user.username.charAt(0).toUpperCase()}
+              </span>
+              <span className="user-account">{user.username}</span>
+              <i className="fa-solid fa-chevron-down" aria-hidden="true" />
+            </summary>
+            <div className="account-popover">
+              <p>Signed in as</p>
+              <strong>{user.username}</strong>
+              <Link to="/add-recipe"><i className="fa-solid fa-plus" /> Add a recipe</Link>
+              <button onClick={handleLogout}>
+                <i className="fas fa-sign-out-alt" /> Log out
+              </button>
+            </div>
+          </details>
         )}
         {!user && <Link to="/login" className="login-nav-btn">Log in</Link>}
       </div>
