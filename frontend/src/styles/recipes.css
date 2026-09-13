@@ -27,7 +27,7 @@
 .recipe-card:hover .card-swiper img { transform: scale(1.025); }
 .card-swiper .swiper-button-next,.card-swiper .swiper-button-prev { width: 34px; height: 44px; margin-top: -22px; border-radius: 0; background: transparent; color: white; opacity: .92; transition: opacity .2s ease, transform .2s ease; }
 .card-swiper .swiper-button-next:hover,.card-swiper .swiper-button-prev:hover { opacity: 1; transform: scale(1.08); }
-.card-swiper .swiper-button-next::after,.card-swiper .swiper-button-prev::after { font-size: 17px; font-weight: 800; filter: drop-shadow(0 2px 4px rgba(0,0,0,.75)); }
+.card-swiper .swiper-button-next::after,.card-swiper .swiper-button-prev::after { font-size: 13px; font-weight: 800; filter: drop-shadow(0 2px 4px rgba(0,0,0,.75)); }
 .card-swiper .swiper-pagination-bullet-active { background: #f4aa6b; }
 .recipe-placeholder { display: grid; height: 100%; place-items: center; color: #aaa69b; font-size: 2rem; }
 .recipe-card-body { padding: 18px; }
