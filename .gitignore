@@ -6,3 +6,4 @@
 **/.env.*
 !**/.env.example
 coverage/
+app-info.txt
