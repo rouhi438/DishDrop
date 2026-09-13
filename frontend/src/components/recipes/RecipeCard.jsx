@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import {Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -14,9 +14,8 @@ export default function RecipeCard({ recipe, currentUserId, onView, onEdit, onDe
   return (
     <article className="recipe-card">
       <button className="recipe-image-button" onClick={() => onView(recipe)} aria-label={`View ${recipe.name}`}>
-        {images.length ? <Swiper modules={[Navigation, Pagination]} navigation={images.length > 1} pagination={images.length > 1 ? { clickable: true } : false} loop={images.length > 1} className="card-swiper">
-          {images.map((image, index) => <SwiperSlide key={`${image.slice(0, 30)}-${index}`}><img src={image} alt={index === 0 ? recipe.name : `${recipe.name}, image ${index + 1}`} loading="lazy" /></SwiperSlide>)}
-        </Swiper> : <div className="recipe-placeholder" aria-hidden="true"><i className="fa-solid fa-utensils" /></div>}
+        {images.length ? <Swiper modules={[Autoplay, Navigation, Pagination]} navigation={images.length > 1} pagination={images.length > 1 ? { clickable: true } : false} autoplay={images.length > 1 ? { delay: 3500, disableOnInteraction: false, pauseOnMouseEnter: true } : false} speed={650} loop={images.length > 1} className="card-swiper">
+          {images.map((image, index) => <SwiperSlide key={`${image.slice(0, 30)}-${index}`}><img src={image} alt={index === 0 ? recipe.name : `${recipe.name}, image ${index + 1}`} loading="lazy" /></SwiperSlide>)}        </Swiper> : <div className="recipe-placeholder" aria-hidden="true"><i className="fa-solid fa-utensils" /></div>}
       </button>
       <div className="recipe-card-body">
         <div className="meta-tags"><span>{recipe.category}</span><span>{recipe.cuisine || "Other"}</span></div>
