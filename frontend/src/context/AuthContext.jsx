@@ -24,7 +24,8 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     const { data } = await loginApi(username, password);
     const authenticatedUser = createUserFromSession(data.token, data.user);
-    if (!authenticatedUser) throw new Error("The server returned an invalid session.");
+    if (!authenticatedUser)
+      throw new Error("The server returned an invalid session.");
     localStorage.setItem("token", data.token);
     localStorage.setItem("username", data.user);
     setUser(authenticatedUser);
@@ -33,7 +34,8 @@ export const AuthProvider = ({ children }) => {
   const register = async (username, password, email) => {
     const { data } = await registerApi(username, password, email);
     const authenticatedUser = createUserFromSession(data.token, data.user);
-    if (!authenticatedUser) throw new Error("The server returned an invalid session.");
+    if (!authenticatedUser)
+      throw new Error("The server returned an invalid session.");
     localStorage.setItem("token", data.token);
     localStorage.setItem("username", data.user);
     setUser(authenticatedUser);

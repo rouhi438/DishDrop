@@ -67,7 +67,8 @@ export default function AdminPage() {
           <p className="admin-eyebrow">DishDrop operations</p>
           <h1 className="admin-title">Community overview</h1>
           <p className="admin-intro">
-            A clear snapshot of members, recipes, and activity across the platform.
+            A clear snapshot of members, recipes, and activity across the
+            platform.
           </p>
         </header>
 
@@ -142,9 +143,14 @@ export default function AdminPage() {
                 <details className="rated-recipes">
                   <summary>
                     Rated recipe IDs
-                    <i className="fa-solid fa-chevron-down" aria-hidden="true" />
+                    <i
+                      className="fa-solid fa-chevron-down"
+                      aria-hidden="true"
+                    />
                   </summary>
-                  <p>{userStat.ratedRecipesIds?.join(", ") || "No ratings yet"}</p>
+                  <p>
+                    {userStat.ratedRecipesIds?.join(", ") || "No ratings yet"}
+                  </p>
                 </details>
               </article>
             ))}

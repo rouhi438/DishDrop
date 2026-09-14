@@ -11,6 +11,17 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-button, input, textarea, select { font: inherit; }
-button, a { -webkit-tap-highlight-color: transparent; }
-:focus-visible { outline: 3px solid #f0a15b; outline-offset: 3px; }
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+:focus-visible {
+  outline: 3px solid #f0a15b;
+  outline-offset: 3px;
+}

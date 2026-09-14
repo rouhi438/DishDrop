@@ -2,8 +2,16 @@
   min-height: 100vh;
   padding: 30px 24px 78px;
   background:
-    radial-gradient(circle at 88% 7%, rgba(244, 170, 107, .2), transparent 27%),
-    radial-gradient(circle at 7% 42%, rgba(95, 139, 116, .12), transparent 24%),
+    radial-gradient(
+      circle at 88% 7%,
+      rgba(244, 170, 107, 0.2),
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 7% 42%,
+      rgba(95, 139, 116, 0.12),
+      transparent 24%
+    ),
     #f6f4ee;
   color: #17211b;
 }
@@ -27,19 +35,22 @@
   align-items: center;
   justify-content: center;
   gap: 9px;
-  border: 1px solid rgba(23, 60, 50, .16);
+  border: 1px solid rgba(23, 60, 50, 0.16);
   border-radius: 999px;
   padding: 0 16px;
-  background: rgba(255, 255, 255, .72);
+  background: rgba(255, 255, 255, 0.72);
   color: #173c32;
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .back-btn:hover {
-  border-color: rgba(23, 60, 50, .35);
+  border-color: rgba(23, 60, 50, 0.35);
   background: #fff;
   transform: translateY(-1px);
 }
@@ -52,9 +63,9 @@
   padding: 9px 13px;
   background: #e4ebe6;
   color: #486056;
-  font-size: .7rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: .04em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
@@ -70,9 +81,9 @@
 .editor-eyebrow {
   margin-bottom: 12px;
   color: #bc6232;
-  font-size: .7rem;
+  font-size: 0.7rem;
   font-weight: 800;
-  letter-spacing: .2em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
@@ -81,11 +92,11 @@
   font-family: "DM Serif Display", Georgia, serif;
   font-size: clamp(3rem, 6vw, 5.2rem);
   font-weight: 400;
-  letter-spacing: -.045em;
-  line-height: .98;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
 }
 
-.recipe-editor-heading>p:last-child {
+.recipe-editor-heading > p:last-child {
   max-width: 620px;
   margin-top: 18px;
   color: #626961;
@@ -95,18 +106,18 @@
 
 .recipe-form-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(330px, .85fr);
+  grid-template-columns: minmax(0, 1.55fr) minmax(330px, 0.85fr);
   align-items: start;
   gap: 20px;
 }
 
 .form-panel {
   min-width: 0;
-  border: 1px solid rgba(23, 25, 22, .09);
+  border: 1px solid rgba(23, 25, 22, 0.09);
   border-radius: 24px;
   padding: 28px;
-  background: rgba(255, 255, 255, .9);
-  box-shadow: 0 18px 48px rgba(31, 48, 40, .075);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 48px rgba(31, 48, 40, 0.075);
 }
 
 .form-left {
@@ -140,20 +151,20 @@
   border-radius: 12px;
   background: #173c32;
   color: #f4aa6b;
-  font-size: .68rem;
+  font-size: 0.68rem;
   font-weight: 800;
 }
 
 .form-section-heading h2 {
   color: #1b2922;
   font-size: 1.05rem;
-  letter-spacing: -.015em;
+  letter-spacing: -0.015em;
 }
 
 .form-section-heading p {
   margin-top: 4px;
   color: #8a8f89;
-  font-size: .75rem;
+  font-size: 0.75rem;
   line-height: 1.45;
 }
 
@@ -167,7 +178,7 @@
   display: block;
   margin-bottom: 8px;
   color: #39463f;
-  font-size: .75rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -181,9 +192,12 @@
   background: #fbfbf8;
   color: #1d241f;
   font-family: inherit;
-  font-size: .86rem;
+  font-size: 0.86rem;
   line-height: 1.55;
-  transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 #add .field-group input,
@@ -214,14 +228,14 @@
   border-color: #d87842;
   outline: 0;
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(216, 120, 66, .12);
+  box-shadow: 0 0 0 4px rgba(216, 120, 66, 0.12);
 }
 
-#add .field-group>small {
+#add .field-group > small {
   display: block;
   margin-top: 7px;
   color: #92968f;
-  font-size: .68rem;
+  font-size: 0.68rem;
 }
 
 #add .btn-holder {
@@ -239,10 +253,14 @@
   gap: 9px;
   border-radius: 999px;
   padding: 0 22px;
-  font-size: .82rem;
+  font-size: 0.82rem;
   font-weight: 750;
   cursor: pointer;
-  transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 #add .add-item-btn {
@@ -250,13 +268,13 @@
   border: 1px solid #d87842;
   background: #d87842;
   color: #fff;
-  box-shadow: 0 10px 22px rgba(190, 92, 43, .2);
+  box-shadow: 0 10px 22px rgba(190, 92, 43, 0.2);
 }
 
 #add .add-item-btn:hover {
   background: #c76734;
   border-color: #c76734;
-  box-shadow: 0 13px 26px rgba(190, 92, 43, .25);
+  box-shadow: 0 13px 26px rgba(190, 92, 43, 0.25);
   transform: translateY(-2px);
 }
 
@@ -290,7 +308,10 @@
   border-radius: 18px;
   background: #f7f7f2;
   cursor: pointer;
-  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .image-card.cover-image-card {
@@ -331,13 +352,13 @@
 }
 
 .upload-placeholder strong {
-  font-size: .76rem;
+  font-size: 0.76rem;
 }
 
 .upload-placeholder small {
   margin-top: 4px;
   color: #959a94;
-  font-size: .62rem;
+  font-size: 0.62rem;
 }
 
 .image-preview {
@@ -351,7 +372,7 @@
   position: absolute;
   inset: auto 0 0;
   height: 35%;
-  background: linear-gradient(transparent, rgba(6, 22, 17, .28));
+  background: linear-gradient(transparent, rgba(6, 22, 17, 0.28));
   content: "";
   pointer-events: none;
 }
@@ -373,14 +394,16 @@
   width: 32px;
   height: 32px;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, .4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 50%;
-  background: rgba(18, 31, 25, .78);
+  background: rgba(18, 31, 25, 0.78);
   color: #fff;
-  font-size: .76rem;
+  font-size: 0.76rem;
   cursor: pointer;
   backdrop-filter: blur(6px);
-  transition: background .2s ease, transform .2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .remove-img:hover {
@@ -394,7 +417,7 @@
   gap: 8px;
   margin-top: 15px;
   color: #858a84;
-  font-size: .68rem;
+  font-size: 0.68rem;
   line-height: 1.55;
 }
 

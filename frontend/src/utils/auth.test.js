@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { createUserFromSession, decodeToken } from "./auth.js";
 
 function tokenFor(payload) {
-  const encode = (value) => Buffer.from(JSON.stringify(value)).toString("base64url");
+  const encode = (value) =>
+    Buffer.from(JSON.stringify(value)).toString("base64url");
   return `${encode({ alg: "none" })}.${encode(payload)}.`;
 }
 
@@ -25,7 +26,11 @@ test("createUserFromSession restores a valid user", () => {
 test("createUserFromSession rejects malformed and expired sessions", () => {
   assert.equal(createUserFromSession("not-a-token", "Helena"), null);
   assert.equal(
-    createUserFromSession(tokenFor({ id: "abc", exp: 1_000 }), "Helena", 1_000_000),
+    createUserFromSession(
+      tokenFor({ id: "abc", exp: 1_000 }),
+      "Helena",
+      1_000_000,
+    ),
     null,
   );
 });

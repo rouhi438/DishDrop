@@ -22,7 +22,9 @@ export default function Footer() {
             </li>
           </ul>
         </div>
-        <div className="footer-section footer-statement"><p>Made for cooks who keep the good ones.</p></div>
+        <div className="footer-section footer-statement">
+          <p>Made for cooks who keep the good ones.</p>
+        </div>
       </div>
       <div className="footer-bottom">
         <p>&copy; {new Date().getFullYear()} DishDrop. All rights reserved.</p>
