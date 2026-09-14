@@ -14,18 +14,15 @@ export default function HomePage() {
   return (
     <div className="home-wrapper">
       <section className="hero">
-        <video
-          className="background-video"
-          autoPlay
-          loop
-          muted
-          playsInline
-          disablePictureInPicture
-          controlsList="nodownload nofullscreen noremoteplayback"
+        <img
+          className="background-image"
+          src="/images/dishdrop-hero-background.webp"
+          alt=""
           aria-hidden="true"
-        >
-          <source src="/images/video.mp4" type="video/mp4" />
-        </video>
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+        />
         <div className="hero-content">
           <p className="hero-eyebrow">Collect · Cook · Share</p>
           <h1 className="hero-title">
