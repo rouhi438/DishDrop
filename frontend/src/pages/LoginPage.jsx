@@ -123,17 +123,27 @@ export default function LoginPage() {
               className="auth-eye"
               onClick={() => setShowPassword((visible) => !visible)}
             >
-              <i className={`fa-solid ${showPassword ? "fa-eye" : "fa-eye-slash"}`} />
+              <i
+                className={`fa-solid ${showPassword ? "fa-eye" : "fa-eye-slash"}`}
+              />
             </button>
           </div>
         </div>
 
-        {error && <p className="auth-message error" role="alert">{error}</p>}
+        {error && (
+          <p className="auth-message error" role="alert">
+            {error}
+          </p>
+        )}
 
         <button className="auth-submit" type="submit" disabled={submitting}>
           {submitting
-            ? isRegister ? "Creating account…" : "Logging in…"
-            : isRegister ? "Create account" : "Log in"}
+            ? isRegister
+              ? "Creating account…"
+              : "Logging in…"
+            : isRegister
+              ? "Create account"
+              : "Log in"}
         </button>
       </form>
 

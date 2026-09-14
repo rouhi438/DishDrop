@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Layout } from "./components/layout/Layout";
 import LoginPage from "./pages/LoginPage";
@@ -26,14 +32,19 @@ function PrivateRoute({ children }) {
       </div>
     );
   }
-  return user ? children : <Navigate to="/login" state={{ from: location.pathname }} replace />;
+  return user ? (
+    children
+  ) : (
+    <Navigate to="/login" state={{ from: location.pathname }} replace />
+  );
 }
 
 function AdminRoute({ children }) {
   const { user } = useAuth();
   const location = useLocation();
   const isAdmin = user?.isAdmin || false;
-  if (!user) return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+  if (!user)
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   return isAdmin ? children : <Navigate to="/" />;
 }
 

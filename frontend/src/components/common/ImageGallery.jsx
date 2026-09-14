@@ -22,7 +22,9 @@ export default function ImageGallery({ images, name = "Recipe" }) {
               className={idx === current ? "active" : ""}
               aria-label={`Show image ${idx + 1} of ${images.length}`}
               aria-pressed={idx === current}
-            ><img src={img} alt="" /></button>
+            >
+              <img src={img} alt="" />
+            </button>
           ))}
         </div>
       )}

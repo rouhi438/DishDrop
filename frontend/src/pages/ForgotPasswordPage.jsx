@@ -45,7 +45,10 @@ export default function ForgotPasswordPage() {
         </div>
 
         {message && (
-          <p className={`auth-message ${isError ? "error" : "success"}`} role={isError ? "alert" : "status"}>
+          <p
+            className={`auth-message ${isError ? "error" : "success"}`}
+            role={isError ? "alert" : "status"}
+          >
             {message}
           </p>
         )}
@@ -54,7 +57,9 @@ export default function ForgotPasswordPage() {
           {submitting ? "Sending…" : "Send reset link"}
         </button>
       </form>
-      <Link className="auth-back" to="/login">← Back to log in</Link>
+      <Link className="auth-back" to="/login">
+        ← Back to log in
+      </Link>
     </AuthShell>
   );
 }

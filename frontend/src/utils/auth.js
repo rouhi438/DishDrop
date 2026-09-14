@@ -12,7 +12,12 @@ export function decodeToken(token) {
 
 export function createUserFromSession(token, username, now = Date.now()) {
   const payload = token ? decodeToken(token) : null;
-  if (!token || !username || !payload?.id || (payload.exp && payload.exp * 1000 <= now)) {
+  if (
+    !token ||
+    !username ||
+    !payload?.id ||
+    (payload.exp && payload.exp * 1000 <= now)
+  ) {
     return null;
   }
 

@@ -23,7 +23,9 @@ export default function AuthShell({ eyebrow, title, description, children }) {
           </p>
         </div>
 
-        <p className="auth-story-note">Made for real kitchens and real cooks.</p>
+        <p className="auth-story-note">
+          Made for real kitchens and real cooks.
+        </p>
       </section>
 
       <section className="auth-panel">

@@ -63,7 +63,11 @@ export default function ResetPasswordPage() {
           />
         </div>
 
-        {error && <p className="auth-message error" role="alert">{error}</p>}
+        {error && (
+          <p className="auth-message error" role="alert">
+            {error}
+          </p>
+        )}
 
         <button className="auth-submit" type="submit" disabled={submitting}>
           {submitting ? "Updating…" : "Update password"}

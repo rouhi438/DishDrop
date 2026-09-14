@@ -201,7 +201,10 @@ export default function RecipeForm({ initialData, onSubmit, onCancel }) {
             >
               {form.images[idx] ? (
                 <div className="image-preview">
-                  <img src={form.images[idx]} alt={`Recipe preview ${idx + 1}`} />
+                  <img
+                    src={form.images[idx]}
+                    alt={`Recipe preview ${idx + 1}`}
+                  />
                   <button
                     type="button"
                     className="remove-img"
@@ -221,7 +224,9 @@ export default function RecipeForm({ initialData, onSubmit, onCancel }) {
                   <span className="upload-icon-wrap">
                     <i className="fas fa-cloud-upload-alt upload-icon" />
                   </span>
-                  <strong>{idx === 0 ? "Add cover photo" : `Add photo ${idx + 1}`}</strong>
+                  <strong>
+                    {idx === 0 ? "Add cover photo" : `Add photo ${idx + 1}`}
+                  </strong>
                   <small>JPG, PNG or WebP</small>
                 </div>
               )}

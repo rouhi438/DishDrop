@@ -53,14 +53,20 @@ export default function Navbar() {
             <div className="account-popover">
               <p>Signed in as</p>
               <strong>{user.username}</strong>
-              <Link to="/add-recipe"><i className="fa-solid fa-plus" /> Add a recipe</Link>
+              <Link to="/add-recipe">
+                <i className="fa-solid fa-plus" /> Add a recipe
+              </Link>
               <button onClick={handleLogout}>
                 <i className="fas fa-sign-out-alt" /> Log out
               </button>
             </div>
           </details>
         )}
-        {!user && <Link to="/login" className="login-nav-btn">Log in</Link>}
+        {!user && (
+          <Link to="/login" className="login-nav-btn">
+            Log in
+          </Link>
+        )}
       </div>
     </header>
   );

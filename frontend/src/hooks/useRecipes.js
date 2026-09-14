@@ -47,7 +47,9 @@ export const useRecipes = () => {
   const submitRating = async (recipeId, rating) => {
     const { data } = await rateRecipe(recipeId, rating);
     setRecipes((prev) =>
-      prev.map((recipe) => (recipe.id === recipeId ? mergeRatingSummary(recipe, data) : recipe)),
+      prev.map((recipe) =>
+        recipe.id === recipeId ? mergeRatingSummary(recipe, data) : recipe,
+      ),
     );
     return data;
   };
