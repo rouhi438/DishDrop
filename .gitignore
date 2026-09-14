@@ -6,4 +6,5 @@
 **/.env.*
 !**/.env.example
 coverage/
+.DS_Store
 app-info.txt
